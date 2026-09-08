@@ -12,7 +12,12 @@ function SignInPage() {
     function submit(e) {
         e.preventDefault();
         if (!/^\S+@\S+\.\S+$/.test(email)) return setError('Please enter a valid email address.');
-        if (!password) return setError('Please enter your password.'); setError(''); navigate('/dashboard')
+        if (!password) return setError('Please enter your password.')
+
+        const isAdministrator = email.toLowerCase() === 'admin@idreal.com'
+        localStorage.setItem('idreal_role', isAdministrator ? 'administrator' : 'job_seeker')
+        setError('')
+        navigate(isAdministrator ? '/admin' : '/dashboard')
     }
     return (
         <AuthLayout title="Sign In" alternate="Do not have an account?" alternateHref="/signup" alternateLabel="Create an Account">

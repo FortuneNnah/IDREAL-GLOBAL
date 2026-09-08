@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { categories, categorySlugs } from './data/categories'
+import { getJobs } from './data/jobs'
 import './App.css'
 import Header from './Components/Header'
 import SearchBar from './Components/SearchBar'
@@ -8,19 +9,8 @@ import navigate from './Components/Navigate'
 import AuthLayout from './Components/AuthLayout'
 import SignInPage from './Pages/SignInPage'
 import ContactPage from './Pages/ContactPage'
+import AdminPage from './Pages/AdminPage'
 import Footer from './Components/Footer'
-
-const jobs = [
-    ['Senior Product Designer', 'Northstar Labs', 'New York, NY', 'Full-time', 'Hybrid', '$135k - $165k', '2 days ago', 'Product Management', 'NL', 'navy'],
-    ['Frontend Engineer', 'Aster Technologies', 'San Francisco, CA', 'Full-time', 'Remote', '$150k - $190k', '4 days ago', 'Software Development', 'AT', 'blue'],
-    ['Marketing Operations Manager', 'Meridian Group', 'Chicago, IL', 'Full-time', 'On-site', '$92k - $118k', '7 days ago', 'Marketing & Communications', 'MG', 'green'],
-    ['Data Analyst', 'Civic Financial', 'Boston, MA', 'Full-time', 'Hybrid', '$88k - $110k', '9 days ago', 'Data & Analytics', 'CF', 'gold'],
-    ['Senior Software Engineer', 'Pillar Systems', 'Austin, TX', 'Full-time', 'Remote', '$145k - $180k', '11 days ago', 'Software Development', 'PS', 'navy'],
-    ['People Operations Specialist', 'Common Ground', 'Denver, CO', 'Full-time', 'Hybrid', '$78k - $96k', '14 days ago', 'Human Resources', 'CG', 'blue'],
-    ['Financial Analyst', 'Harbor Capital', 'New York, NY', 'Full-time', 'On-site', '$85k - $105k', '18 days ago', 'Accounting & Finance', 'HC', 'green'],
-    ['Customer Success Manager', 'Arcwell Health', 'Remote', 'Full-time', 'Remote', '$90k - $115k', '21 days ago', 'Customer Service', 'AH', 'gold'],
-].map(([title, company, location, type, mode, salary, posted, category, logo, tone], index) => ({ id: index + 1, title, company, location, type, mode, salary, posted, category, logo, tone, experience: index % 2 ? 'Mid Level' : 'Senior' }))
-
 
 function JobCard({ job, saved, onSave }) {
     return (
@@ -48,6 +38,7 @@ function JobCard({ job, saved, onSave }) {
 
 
 function HomePage() {
+    const jobs = useMemo(() => getJobs().filter((job) => job.status === 'published'), [])
     const [saved, setSaved] = useState([]);
     const [keyword, setKeyword] = useState(''); const [location, setLocation] = useState('');
     const filtered = jobs.filter((job) => `${job.title} ${job.company} ${job.category}`.toLowerCase().includes(keyword.toLowerCase()) && `${job.location} ${job.mode}`.toLowerCase().includes(location.toLowerCase()));
@@ -170,13 +161,14 @@ function SignUpPage() {
 
 
 function JobsPage() {
+    const jobs = useMemo(() => getJobs().filter((job) => job.status === 'published'), [])
     const params = new URLSearchParams(window.location.search);
     const [filters, setFilters] = useState({ keyword: params.get('keyword') || '', location: params.get('location') || '', category: params.get('category') || '', type: params.get('type') || '', workplace: params.get('workplace') || '', experience: params.get('experience') || '', sort: params.get('sort') || 'Relevance' });
     const [saved, setSaved] = useState([]);
     const [mobileFilters, setMobileFilters] = useState(false);
     const matches = useMemo(() => {
         const result = jobs.filter((job) => (!filters.keyword || `${job.title} ${job.company} ${job.category}`.toLowerCase().includes(filters.keyword.toLowerCase())) && (!filters.location || `${job.location} ${job.mode}`.toLowerCase().includes(filters.location.toLowerCase())) && (!filters.category || categorySlugs[job.category] === filters.category || job.category === filters.category) && (!filters.type || job.type === filters.type) && (!filters.workplace || job.mode === filters.workplace) && (!filters.experience || job.experience === filters.experience)); return result.sort((a, b) => filters.sort === 'Salary: High to Low' ? b.salary.localeCompare(a.salary) : filters.sort === 'Salary: Low to High' ? a.salary.localeCompare(b.salary) : filters.sort === 'Most Recent' ? a.id - b.id : a.id - b.id)
-    }, [filters]); function update(next) {
+    }, [filters, jobs]); function update(next) {
         const changed = { ...filters, ...next }; setFilters(changed);
         const query = new URLSearchParams(Object.entries(changed).filter(([, value]) => value && value !== 'Relevance')); window.history.replaceState({}, '', `/jobs?${query}`)
     }
@@ -257,6 +249,7 @@ function Filter({ label, value, options, onChange }) {
 }
 
 function JobDetailPage({ jobId }) {
+    const jobs = getJobs().filter((job) => job.status === 'published')
     const job = jobs.find((entry) => String(entry.id) === String(jobId))
     if (!job) return <NotFoundPage />
 
@@ -390,6 +383,7 @@ function App() {
     if (route === '/forgot-password') return <ForgotPasswordPage />
     if (route === '/dashboard') return <DashboardPage />
     if (route === '/employer/dashboard') return <EmployerDashboardPage />
+    if (route === '/admin' || route.startsWith('/admin/')) return <AdminPage route={route} />
 
     return <NotFoundPage />
 }

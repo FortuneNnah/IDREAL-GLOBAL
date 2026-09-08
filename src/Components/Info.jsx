@@ -1,5 +1,3 @@
-import React from 'react'
-
 function Info({ title, value }) {
     return (
         <div className="info-item">
