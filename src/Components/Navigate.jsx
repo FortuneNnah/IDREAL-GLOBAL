@@ -1,5 +1,3 @@
-import React from 'react'
-
 function navigate(path) {
     const fullPath = path.startsWith('http') ? path : path.startsWith('/') ? path : `/${path}`
     const target = fullPath.startsWith('http') ? new URL(fullPath) : null

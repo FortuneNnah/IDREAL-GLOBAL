@@ -1,4 +1,3 @@
-import React from 'react'
 import { useState } from 'react'
 import navigate from '../Components/Navigate'
 import Header from '../Components/Header'

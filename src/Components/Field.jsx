@@ -1,5 +1,3 @@
-import React from 'react'
-
 function Field({ label, value, onChange, type = 'text', name }) {
     return (
         <label>
