@@ -1,7 +1,11 @@
 import React from 'react'
 import { useState } from 'react'
-import Header from './Header'
-import Footer from './Footer'
+import navigate from '../Components/Navigate'
+import Header from '../Components/Header'
+import Info from '../Components/Info'
+import Field from '../Components/Field'
+import Footer from '../Components/Footer'
+
 
 
 const ContactPage = () => {

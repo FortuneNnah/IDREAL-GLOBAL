@@ -1,4 +1,4 @@
-import React from 'react'
+import navigate from './Navigate'
 
 const Footer = () => {
     const date = new Date()

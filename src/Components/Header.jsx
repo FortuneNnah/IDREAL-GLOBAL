@@ -1,4 +1,5 @@
-import React from 'react'
+import { useState } from 'react'
+import navigate from './Navigate'
 
 function Header() {
     const [open, setOpen] = useState(false)
@@ -11,7 +12,6 @@ function Header() {
             <nav className={open ? 'nav open' : 'nav'}>
                 <a href="/" onClick={(e) => { e.preventDefault(); navigate('/') }}>Home</a>
                 <a href="/jobs" onClick={(e) => { e.preventDefault(); navigate('/jobs') }}>Find Jobs</a>
-                <a href="/#companies" onClick={(e) => { e.preventDefault(); navigate('/#companies') }}>Companies</a>
                 <a href="/#resources" onClick={(e) => { e.preventDefault(); navigate('/#resources') }}>Career Resources</a>
                 <a href="/contact" onClick={(e) => { e.preventDefault(); navigate('/contact') }}>Contact</a>
             </nav>

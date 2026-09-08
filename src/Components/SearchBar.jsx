@@ -1,4 +1,5 @@
 import React from 'react'
+import { useState } from 'react'
 
 function SearchBar({ initialKeyword = '', initialLocation = '', onSearch }) {
     const [keyword, setKeyword] = useState(initialKeyword);
